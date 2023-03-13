@@ -16,7 +16,6 @@ import com.yw.game.floatmenu.customfloat.BaseFloatDialog;
 
 public class MyFloatDialog extends BaseFloatDialog {
 
-
     public MyFloatDialog(Context context) {
         super(context);
     }
