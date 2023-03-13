@@ -14,6 +14,7 @@
 package com.yw.game.floatmenu.demo;
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -54,11 +55,17 @@ public class MainActivity extends Activity {
 
     BaseFloatDialog mBaseFloatDialog;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ((TextView)findViewById(R.id.text_view)).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "点击了", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         mActivity = this;
         for (int i = 0; i < menuIcons.length; i++) {
@@ -112,156 +119,156 @@ public class MainActivity extends Activity {
 
     }
 
-    private void showWithCallback() {
-        mBaseFloatDialog = new BaseFloatDialog.FloatDialogImp(this, new BaseFloatDialog.GetViewCallback() {
-            @Override
-            public View getLeftView(LayoutInflater inflater, View.OnTouchListener touchListener) {
-                LinearLayout linearLayout = new LinearLayout(mActivity);
-                linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-                linearLayout.setGravity(Gravity.CENTER);
-
-                TextView textView = new TextView(mActivity);
-                textView.setText("左边");
-
-                textView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(mActivity, "左边的菜单被点击了", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                ImageView imageView = new ImageView(mActivity);
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(dip2px(50), dip2px(50)));
-                imageView.setImageResource(R.drawable.yw_game_logo);
-                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                imageView.setOnTouchListener(touchListener);
-
-                linearLayout.setLayoutParams(new LinearLayout.LayoutParams(dip2px(50), dip2px(50)));
-                linearLayout.setBackgroundResource(R.drawable.yw_game_float_menu_bg);
-                linearLayout.addView(imageView);
-                linearLayout.addView(textView);
-                return linearLayout;
-            }
-
-            @Override
-            public View getRightView(LayoutInflater inflater, View.OnTouchListener touchListener) {
-                LinearLayout linearLayout = new LinearLayout(mActivity);
-                linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-                linearLayout.setGravity(Gravity.CENTER);
-                TextView textView = new TextView(mActivity);
-                textView.setText("右边");
-                textView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(mActivity, "右边的菜单被点击了", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                ImageView imageView = new ImageView(mActivity);
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(dip2px(50), dip2px(50)));
-                imageView.setImageResource(R.drawable.yw_game_logo);
-                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                imageView.setOnTouchListener(touchListener);
-
-                linearLayout.setLayoutParams(new LinearLayout.LayoutParams(dip2px(50), dip2px(50)));
-                linearLayout.setBackgroundResource(R.drawable.yw_game_float_menu_bg);
-                linearLayout.addView(textView);
-                linearLayout.addView(imageView);
-                return linearLayout;
-            }
-
-            @Override
-            public View getLogoView(LayoutInflater inflater) {
-
-
-                LinearLayout linearLayout = new LinearLayout(mActivity);
-                linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-                linearLayout.setGravity(Gravity.CENTER);
-
-                ImageView imageView = new ImageView(mActivity);
-                imageView.setLayoutParams(new LinearLayout.LayoutParams(dip2px(50), dip2px(50)));
-                imageView.setScaleType(ImageView.ScaleType.CENTER);
-                imageView.setImageResource(R.drawable.yw_game_logo);
-
-                linearLayout.setLayoutParams(new LinearLayout.LayoutParams(dip2px(50), dip2px(50)));
-                linearLayout.setBackgroundResource(R.drawable.yw_game_float_menu_bg);
-
-                linearLayout.addView(imageView);
-                return linearLayout;
-            }
-
-            @Override
-            public void resetLogoViewSize(int hintLocation, View logoView) {
-                logoView.clearAnimation();
-                logoView.setTranslationX(0);
-                logoView.setScaleX(1);
-                logoView.setScaleY(1);
-            }
-
-            @Override
-            public void dragingLogoViewOffset(final View smallView, boolean isDraging, boolean isResetPosition, float offset) {
-                if (isDraging && offset > 0) {
-                    smallView.setBackgroundDrawable(null);
-                    smallView.setScaleX(1 + offset);
-                    smallView.setScaleY(1 + offset);
-                } else {
-                    smallView.setBackgroundResource(R.drawable.yw_game_float_menu_bg);
-                    smallView.setTranslationX(0);
-                    smallView.setScaleX(1);
-                    smallView.setScaleY(1);
-                }
-
-
-                if (isResetPosition) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        smallView.setRotation(offset * 360);
-                    }
-                } else {
-                    ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 360 * 4);
-                    valueAnimator.setInterpolator(new LinearInterpolator());
-                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator animation) {
-                            int v = (int) animation.getAnimatedValue();
-                            smallView.setRotation(v);
-                        }
-                    });
-                    valueAnimator.setDuration(800);
-                    valueAnimator.start();
-                }
-            }
-
-            @Override
-            public void shrinkLeftLogoView(View smallView) {
-                smallView.setTranslationX(-smallView.getWidth() / 3);
-            }
-
-            @Override
-            public void shrinkRightLogoView(View smallView) {
-                smallView.setTranslationX(smallView.getWidth() / 3);
-            }
-
-            @Override
-            public void leftViewOpened(View leftView) {
-                Toast.makeText(mActivity, "左边的菜单被打开了", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void rightViewOpened(View rightView) {
-                Toast.makeText(mActivity, "右边的菜单被打开了", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void leftOrRightViewClosed(View smallView) {
-                Toast.makeText(mActivity, "菜单被关闭了", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onDestoryed() {
-
-            }
-        });
-        mBaseFloatDialog.show();
-    }
+//    private void showWithCallback() {
+//        mBaseFloatDialog = new BaseFloatDialog.FloatDialogImp(this, new BaseFloatDialog.GetViewCallback() {
+//            @Override
+//            public View getLeftView(LayoutInflater inflater, View.OnTouchListener touchListener) {
+//                LinearLayout linearLayout = new LinearLayout(mActivity);
+//                linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+//                linearLayout.setGravity(Gravity.CENTER);
+//
+//                TextView textView = new TextView(mActivity);
+//                textView.setText("左边");
+//
+//                textView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Toast.makeText(mActivity, "左边的菜单被点击了", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//                ImageView imageView = new ImageView(mActivity);
+//                imageView.setLayoutParams(new LinearLayout.LayoutParams(dip2px(50), dip2px(50)));
+//                imageView.setImageResource(R.drawable.yw_game_logo);
+//                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//                imageView.setOnTouchListener(touchListener);
+//
+//                linearLayout.setLayoutParams(new LinearLayout.LayoutParams(dip2px(50), dip2px(50)));
+//                linearLayout.setBackgroundResource(R.drawable.yw_game_float_menu_bg);
+//                linearLayout.addView(imageView);
+//                linearLayout.addView(textView);
+//                return linearLayout;
+//            }
+//
+//            @Override
+//            public View getRightView(LayoutInflater inflater, View.OnTouchListener touchListener) {
+//                LinearLayout linearLayout = new LinearLayout(mActivity);
+//                linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+//                linearLayout.setGravity(Gravity.CENTER);
+//                TextView textView = new TextView(mActivity);
+//                textView.setText("右边");
+//                textView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Toast.makeText(mActivity, "右边的菜单被点击了", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//
+//                ImageView imageView = new ImageView(mActivity);
+//                imageView.setLayoutParams(new LinearLayout.LayoutParams(dip2px(50), dip2px(50)));
+//                imageView.setImageResource(R.drawable.yw_game_logo);
+//                imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//                imageView.setOnTouchListener(touchListener);
+//
+//                linearLayout.setLayoutParams(new LinearLayout.LayoutParams(dip2px(50), dip2px(50)));
+//                linearLayout.setBackgroundResource(R.drawable.yw_game_float_menu_bg);
+//                linearLayout.addView(textView);
+//                linearLayout.addView(imageView);
+//                return linearLayout;
+//            }
+//
+//            @Override
+//            public View getLogoView(LayoutInflater inflater) {
+//
+//
+//                LinearLayout linearLayout = new LinearLayout(mActivity);
+//                linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+//                linearLayout.setGravity(Gravity.CENTER);
+//
+//                ImageView imageView = new ImageView(mActivity);
+//                imageView.setLayoutParams(new LinearLayout.LayoutParams(dip2px(50), dip2px(50)));
+//                imageView.setScaleType(ImageView.ScaleType.CENTER);
+//                imageView.setImageResource(R.drawable.yw_game_logo);
+//
+//                linearLayout.setLayoutParams(new LinearLayout.LayoutParams(dip2px(50), dip2px(50)));
+//                linearLayout.setBackgroundResource(R.drawable.yw_game_float_menu_bg);
+//
+//                linearLayout.addView(imageView);
+//                return linearLayout;
+//            }
+//
+//            @Override
+//            public void resetLogoViewSize(int hintLocation, View logoView) {
+//                logoView.clearAnimation();
+//                logoView.setTranslationX(0);
+//                logoView.setScaleX(1);
+//                logoView.setScaleY(1);
+//            }
+//
+//            @Override
+//            public void dragingLogoViewOffset(final View smallView, boolean isDraging, boolean isResetPosition, float offset) {
+//                if (isDraging && offset > 0) {
+//                    smallView.setBackgroundDrawable(null);
+//                    smallView.setScaleX(1 + offset);
+//                    smallView.setScaleY(1 + offset);
+//                } else {
+//                    smallView.setBackgroundResource(R.drawable.yw_game_float_menu_bg);
+//                    smallView.setTranslationX(0);
+//                    smallView.setScaleX(1);
+//                    smallView.setScaleY(1);
+//                }
+//
+//
+//                if (isResetPosition) {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                        smallView.setRotation(offset * 360);
+//                    }
+//                } else {
+//                    ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 360 * 4);
+//                    valueAnimator.setInterpolator(new LinearInterpolator());
+//                    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//                        @Override
+//                        public void onAnimationUpdate(ValueAnimator animation) {
+//                            int v = (int) animation.getAnimatedValue();
+//                            smallView.setRotation(v);
+//                        }
+//                    });
+//                    valueAnimator.setDuration(800);
+//                    valueAnimator.start();
+//                }
+//            }
+//
+//            @Override
+//            public void shrinkLeftLogoView(View smallView) {
+//                smallView.setTranslationX(-smallView.getWidth() / 3);
+//            }
+//
+//            @Override
+//            public void shrinkRightLogoView(View smallView) {
+//                smallView.setTranslationX(smallView.getWidth() / 3);
+//            }
+//
+//            @Override
+//            public void leftViewOpened(View leftView) {
+//                Toast.makeText(mActivity, "左边的菜单被打开了", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void rightViewOpened(View rightView) {
+//                Toast.makeText(mActivity, "右边的菜单被打开了", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void leftOrRightViewClosed(View smallView) {
+//                Toast.makeText(mActivity, "菜单被关闭了", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onDestoryed() {
+//
+//            }
+//        });
+//        mBaseFloatDialog.show();
+//    }
 
 
     private int dip2px(float dipValue) {
